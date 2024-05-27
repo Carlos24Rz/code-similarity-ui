@@ -1,10 +1,11 @@
 'use client';
 import * as React from 'react';
-import { Paper, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { EditorView, basicSetup } from "codemirror";
 import { python } from '@codemirror/lang-python';
 
 import CodeEditor from '../CodeEditor/CodeEditor';
+import CodeEditorHeaderBar from '../CodeEditorHeaderBar/CodeEditorHeaderBar';
 
 
 import { SubmissionSimilarity } from '@/lib/definitions';
@@ -20,12 +21,12 @@ export default function DiffViewer(props: Props) {
 
     const sourcesSimilarityDecorations = React.useMemo(() => {
         return getSimmilarityDecorations(sources);
-    }, [])
+    }, []);
 
     return (
-        <Paper>
             <Grid container columns={2} spacing={2}>
                 <Grid item flex={'1 1 0'}>
+                    <CodeEditorHeaderBar filename={sources.submissionA.filename} author={sources.submissionA.filename}/>
                     <CodeEditor
                       content={sources.submissionA.content}
                       extensions={[
@@ -37,6 +38,7 @@ export default function DiffViewer(props: Props) {
                     />
                 </Grid>
                 <Grid item flex={'1 1 0'}>
+                    <CodeEditorHeaderBar filename={sources.submissionB.filename} author={sources.submissionB.filename}/>
                     <CodeEditor
                       content={sources.submissionB.content}
                       extensions={[
@@ -48,6 +50,5 @@ export default function DiffViewer(props: Props) {
                     />
                 </Grid>
             </Grid>
-        </Paper>
     )
 }
