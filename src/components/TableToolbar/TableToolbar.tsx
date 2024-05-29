@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { Toolbar, Typography, Button } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Toolbar, Typography } from '@mui/material';
 
 interface Props {
     tableTitle: string;
-    addMessage: string;
-    onAddItem: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    addElement: React.ReactNode;
 }
 
 export default function TableToolbar(props: Props) {
-    const { tableTitle, addMessage, onAddItem } = props;
+    const { tableTitle, addElement } = props;
 
     return (
         <Toolbar
@@ -29,13 +27,7 @@ export default function TableToolbar(props: Props) {
             >
                 {tableTitle}
             </Typography>
-            <Button
-              variant='text'
-              startIcon={<Add />}
-              onClick={onAddItem}
-            >
-                {addMessage}
-            </Button>
+            {addElement}
         </Toolbar>
     )
 }

@@ -4,7 +4,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import AppHeader from "../components/AppHeader/AppHeader";
 import theme from '../theme'
 
-
 export default function RootLayout({
   children,
 }: Readonly<{

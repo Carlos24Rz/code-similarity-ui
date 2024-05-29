@@ -13,49 +13,53 @@ import {
 import { SortOrder, getComparator, sortArray } from '@/utils/sort';
 import SortingTableHead from '../SortingTableHead/SortingTableHead';
 import TableToolbar from '../TableToolbar/TableToolbar';
-import CreateHomeworkDialog from '../CreateHomeworkDialog/CreateHomeworkDialog';
+import CreateSubmissionDialog from '../CreateSubmissionDialog/CreateSubmissionDialog';
 
 
 // TODO: Implementar Tabla con Backend
 
-interface Homework {
-    id: number,
-    title: string,
-    submissions: number,
-    similarityStatus: 0 | 1 | 2 | 3
+interface Submission {
+    id: number;
+    filename: string;
+    author: string;
+    similarityStatus: number;
 }
 
+const dummy_authors = [
+  "Eduardo",
+  "Jose",
+  "Sebastian",
+  "Jesús",
+  "Daniel",
+  "Carlos"
+]
 
 function createDummyRows(numRows: number) {
-    const rows: Homework[] = []
+    const rows: Submission[] = []
 
     for (let i = 0; i < numRows; i++) {
-        const homeworkTitle = `Tarea ${i + 1}`;
-        const homeworkSubmissions = Math.floor(Math.random() * 30);
-        let homeworkSimilarityStatus = 0 as 0 | 1 | 2 | 3;
-
-        if (homeworkSubmissions !== 0) {
-            homeworkSimilarityStatus = Math.floor(Math.random() * 3) + 1 as 0 | 1 | 2 | 3;
-        }
+        const submissionFilename = `test${i + 1}.py`;
+        const submissionAuthor = dummy_authors[Math.floor(Math.random() * 6)];
+        const submissionSimilarityStatus = Math.floor(Math.random() * 100);
 
         rows.push({
             id: i,
-            title: homeworkTitle,
-            submissions: homeworkSubmissions,
-            similarityStatus: homeworkSimilarityStatus
+            filename: submissionFilename,
+            author: submissionAuthor,
+            similarityStatus: submissionSimilarityStatus
         });
     }
 
     return rows;
 }
 
-const dummyTableCols: { id: keyof Homework, label: string }[] = [{ id: 'title', label: 'Título' }, { id: 'submissions', label: 'Entregas' }, { id: 'similarityStatus', label: 'Similitud entre entregas' }];
+const dummyTableCols: { id: keyof Submission, label: string }[] = [{ id: 'filename', label: 'Archivo' }, { id: 'author', label: 'Autor' }, { id: 'similarityStatus', label: 'Índice de similitud' }];
 
-export default function HomeworkListTable() {
+export default function SubmissionListTable() {
     const [order, setOrder] = React.useState<SortOrder>('desc');
-    const [orderBy, setOrderBy] = React.useState<keyof Homework>('similarityStatus');
+    const [orderBy, setOrderBy] = React.useState<keyof Submission>('similarityStatus');
     const [page, setPage] = React.useState(0);
-    const [dummyTableRows, setDummyTableRows] = React.useState<Homework[]>([]);
+    const [dummyTableRows, setDummyTableRows] = React.useState<Submission[]>([]);
     const rowsPerPage = 10;
 
     React.useEffect(() => {
@@ -64,7 +68,7 @@ export default function HomeworkListTable() {
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
-        property: keyof Homework,
+        property: keyof Submission,
     ) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -75,14 +79,14 @@ export default function HomeworkListTable() {
         setPage(newPage);
     };
 
-    const handleOpenHomework = (
-        homeworkId: number
+    const handleOpenSubmission = (
+        submissionId: number
     ) => {
-        // TODO: Open Homework
+        // TODO: Open Submission
     }
 
-    const reloadHomeworkList = () => {
-        // TODO: Reload Homework List
+    const reloadSubmissionList = () => {
+        // TODO: Reload submissionList
     }
 
     const visibleRows = React.useMemo(
@@ -102,8 +106,8 @@ export default function HomeworkListTable() {
         
         >
             <TableToolbar
-                tableTitle='Tareas'
-                addElement={<CreateHomeworkDialog onSubmit={reloadHomeworkList}/>}
+                tableTitle='Entregas'
+                addElement={<CreateSubmissionDialog onSubmit={reloadSubmissionList} />}
             />
             <TableContainer>
                 <Table>
@@ -121,25 +125,21 @@ export default function HomeworkListTable() {
                               }}
                               key={row.id}
                               hover
-                              onClick={() => handleOpenHomework(row.id)}
+                              onClick={() => handleOpenSubmission(row.id)}
                             >
-                                <TableCell>{row.title}</TableCell>
-                                <TableCell align='right'>{row.submissions}</TableCell>
+                                <TableCell>{row.filename}</TableCell>
+                                <TableCell align='right'>{row.author}</TableCell>
                                 <TableCell align='right'>
-                                    {row.similarityStatus === 3 ? (
-                                        <Chip label='Alto' color='error' />
-                                    ) : row.similarityStatus === 2 ? (
-                                        <Chip label='Medio' color='warning' />
-                                    ) : row.similarityStatus === 1 ? (
-                                        <Chip label='Bajo' color='primary' />
-                                    ) : (
-                                        <Chip
-                                          sx={{
-                                            backgroundColor: '#EDEEF0'
-                                          }}
-                                          label='N/A'
-                                        />
-                                    )}
+                                  <Chip
+                                    label={`${row.similarityStatus}%`} 
+                                    color={
+                                      row.similarityStatus > 75 ?
+                                        "error"
+                                      : row.similarityStatus > 50 && row.similarityStatus < 75 ?
+                                        "warning"
+                                      : "primary"
+                                    }
+                                  />
                                 </TableCell>
                             </TableRow>
                         ))}
