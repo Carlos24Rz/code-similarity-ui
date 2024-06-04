@@ -10,6 +10,7 @@ import CodeEditorHeaderBar from '../CodeEditorHeaderBar/CodeEditorHeaderBar';
 
 import { SubmissionSimilarity } from '@/lib/definitions';
 import { getSimmilarityDecorations } from '@/utils/editorSimmilarityDecorations';
+import CodeViewerDrawer from '../CodeViewerDrawer/CodeViewerDrawer';
 
 
 interface Props {
@@ -18,12 +19,35 @@ interface Props {
 
 export default function DiffViewer(props: Props) {
     const { sources } = props;
+    const [ selectedHashes, setSelectedHashes ] = React.useState<Set<string>>(new Set()); 
+
+    React.useEffect(() => {
+      const newHashes = new Set(sources.matches.map((match) => match.hash));
+
+      setSelectedHashes(newHashes);
+
+    }, [])
+
+    console.log(selectedHashes);
+
+    const handleHashToggle = (hash: string) => {
+      const newHashes = new Set(selectedHashes);
+
+      if (newHashes.has(hash)){
+        newHashes.delete(hash);
+      }else {
+        newHashes.add(hash);
+      }
+
+      setSelectedHashes(newHashes);
+    }
 
     const sourcesSimilarityDecorations = React.useMemo(() => {
-        return getSimmilarityDecorations(sources);
-    }, []);
+        return getSimmilarityDecorations(sources, selectedHashes);
+    }, [selectedHashes]);
 
     return (
+      <>
             <Grid container columns={2} spacing={2}>
                 <Grid item flex={'1 1 0'}>
                     <CodeEditorHeaderBar filename={sources.submissionA.filename} author={sources.submissionA.filename}/>
@@ -50,5 +74,7 @@ export default function DiffViewer(props: Props) {
                     />
                 </Grid>
             </Grid>
+            <CodeViewerDrawer submissionSimilarity={sources} selectedHashes={selectedHashes} onHashChange={handleHashToggle} />
+      </>
     )
 }

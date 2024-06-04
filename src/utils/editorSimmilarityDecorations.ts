@@ -2,12 +2,17 @@ import { Text } from "@codemirror/state";
 import { EditorView, Decoration } from "@codemirror/view";
 import { KGramPosition, SubmissionSimilarity } from "@/lib/definitions";
 
-const highlightcolorSet = [
+export const highlightcolorSet = [
     "#fdff00",
     "#ff9a00",
     "#00ff04",
     "#00c5ff",
     "#ff00a7",
+    "#8cff32",
+    "#ff1837",
+    "#840933",
+    "#b000ff",
+    "#efc8ff"
 ];
 
 const highlightDecorationList: Decoration[] = highlightcolorSet.map(color => 
@@ -30,7 +35,8 @@ function computeKGramTextPositon(text: Text, position: KGramPosition){
 }
 
 export function getSimmilarityDecorations(
-    sources: SubmissionSimilarity
+    sources: SubmissionSimilarity,
+    filterHashes: Set<string>
 ) {
     const submissionA_decorationList = [];
     const submissionB_decorationList = [];
@@ -38,8 +44,13 @@ export function getSimmilarityDecorations(
     const submissionA_content = Text.of(sources.submissionA.content.split('\n'));
     const submissionB_content = Text.of(sources.submissionB.content.split('\n'));
 
-    let idx = 0;
-    for (let match of sources.matches) {
+    for (let idx = 0; idx < sources.matches.length; idx++) {
+        const match = sources.matches[idx];
+        
+        if (!filterHashes.has(match.hash)){
+          continue;
+        }
+
         const highlightDecoration = highlightDecorationList[idx % highlightDecorationList.length];
 
         for (let kGramPosition of match.submissionA) {
@@ -53,12 +64,10 @@ export function getSimmilarityDecorations(
             const newDecorationRange = highlightDecoration.range(kGramTextPosition.from, kGramTextPosition.to);
             submissionB_decorationList.push(newDecorationRange);
         }
-
-        idx = idx + 1;
     }
 
-    const submissionA_decorationSet = Decoration.set(submissionA_decorationList);
-    const submissionB_decorationSet = Decoration.set(submissionB_decorationList);
+    const submissionA_decorationSet = Decoration.set(submissionA_decorationList, true);
+    const submissionB_decorationSet = Decoration.set(submissionB_decorationList, true);
 
     return {
         submissionA: EditorView.decorations.of(submissionA_decorationSet),

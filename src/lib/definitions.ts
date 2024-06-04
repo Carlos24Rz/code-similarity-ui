@@ -25,3 +25,30 @@ export interface SubmissionSimilarity {
     submissionB: Submission;
     matches: KGramHashMatches[]
 }
+
+export interface SubmissionSimilarityRequest {
+  message: string;
+  submission_similarity: SubmissionSimilarity;
+}
+
+export interface Homework {
+    homework_id: string;
+    name: string;
+}
+
+export interface HomeworkRequest {
+    homeworks: Homework[];
+    message: string;
+}
+
+export interface HomeworkSubmission {
+    id: number;
+    filename: string;
+    author: string;
+    similarityStatus: number;
+}
+
+export interface HomeworkSubmissionRequest {
+    submissions: HomeworkSubmission[];
+    message: string;
+}

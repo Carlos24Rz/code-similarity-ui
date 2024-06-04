@@ -30,6 +30,15 @@ export default function AnimatedCircularProgress(props: CircularProgressProps & 
     return (
       <Box sx={{ position: 'relative', display: 'inline-flex' }}>
         <CircularProgress
+          {...circularProgressProps}
+          sx={{
+            color: "grey.100",
+            position: "absolute"
+          }}
+          variant='determinate'
+          value={100}
+        />
+        <CircularProgress
             {...circularProgressProps}
             variant="determinate"
             value={progress}
@@ -44,6 +53,7 @@ export default function AnimatedCircularProgress(props: CircularProgressProps & 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            pl: 1
           }}
         >
           <Typography

@@ -27,7 +27,7 @@ export default function CodeEditor(props: Props) {
             newEditorView.destroy();
             setEditorView(undefined);
         }
-    }, []);
+    }, [extensions]);
 
     return (
         <div id='editor-root' ref={editorParentRef}/>

@@ -1,9 +1,15 @@
-import { AppBar, Link, Typography, Toolbar } from '@mui/material';
+import { AppBar, Link, Toolbar } from '@mui/material';
 import AuthMenu from '../AuthMenu/AuthMenu';
 
 export default function AppHeader() {
     return (
-        <AppBar position='static'>
+      <>
+        <AppBar
+          position="fixed"
+          sx={{
+            zIndex: 1201
+          }}
+        >
             <Toolbar
                 sx={{
                     justifyContent: 'space-between'
@@ -13,5 +19,7 @@ export default function AppHeader() {
                 <AuthMenu />
             </Toolbar>
         </AppBar>
+        <Toolbar />
+      </>
     )
 }

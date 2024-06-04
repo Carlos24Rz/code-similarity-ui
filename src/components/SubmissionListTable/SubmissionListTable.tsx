@@ -14,61 +14,28 @@ import { SortOrder, getComparator, sortArray } from '@/utils/sort';
 import SortingTableHead from '../SortingTableHead/SortingTableHead';
 import TableToolbar from '../TableToolbar/TableToolbar';
 import CreateSubmissionDialog from '../CreateSubmissionDialog/CreateSubmissionDialog';
+import { HomeworkSubmission } from '@/lib/definitions';
+import { usePathname, useRouter } from 'next/navigation';
 
+const dummyTableCols: { id: keyof HomeworkSubmission, label: string }[] = [{ id: 'filename', label: 'Archivo' }, { id: 'author', label: 'Autor' }, { id: 'similarityStatus', label: 'Índice de similitud' }];
 
-// TODO: Implementar Tabla con Backend
-
-interface Submission {
-    id: number;
-    filename: string;
-    author: string;
-    similarityStatus: number;
+interface Props {
+    submissionList: HomeworkSubmission[]
 }
 
-const dummy_authors = [
-  "Eduardo",
-  "Jose",
-  "Sebastian",
-  "Jesús",
-  "Daniel",
-  "Carlos"
-]
+export default function SubmissionListTable(props: Props) {
+    const { submissionList } = props;
+    const router = useRouter();
+    const pathname = usePathname();
 
-function createDummyRows(numRows: number) {
-    const rows: Submission[] = []
-
-    for (let i = 0; i < numRows; i++) {
-        const submissionFilename = `test${i + 1}.py`;
-        const submissionAuthor = dummy_authors[Math.floor(Math.random() * 6)];
-        const submissionSimilarityStatus = Math.floor(Math.random() * 100);
-
-        rows.push({
-            id: i,
-            filename: submissionFilename,
-            author: submissionAuthor,
-            similarityStatus: submissionSimilarityStatus
-        });
-    }
-
-    return rows;
-}
-
-const dummyTableCols: { id: keyof Submission, label: string }[] = [{ id: 'filename', label: 'Archivo' }, { id: 'author', label: 'Autor' }, { id: 'similarityStatus', label: 'Índice de similitud' }];
-
-export default function SubmissionListTable() {
     const [order, setOrder] = React.useState<SortOrder>('desc');
-    const [orderBy, setOrderBy] = React.useState<keyof Submission>('similarityStatus');
+    const [orderBy, setOrderBy] = React.useState<keyof HomeworkSubmission>('similarityStatus');
     const [page, setPage] = React.useState(0);
-    const [dummyTableRows, setDummyTableRows] = React.useState<Submission[]>([]);
     const rowsPerPage = 10;
-
-    React.useEffect(() => {
-        setDummyTableRows(createDummyRows(30));
-    }, [])
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
-        property: keyof Submission,
+        property: keyof HomeworkSubmission,
     ) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -83,6 +50,7 @@ export default function SubmissionListTable() {
         submissionId: number
     ) => {
         // TODO: Open Submission
+        router.push(`${pathname}/submission/${submissionId}`);
     }
 
     const reloadSubmissionList = () => {
@@ -90,11 +58,11 @@ export default function SubmissionListTable() {
     }
 
     const visibleRows = React.useMemo(
-        () => sortArray(dummyTableRows, getComparator(order, orderBy)).slice(
+        () => sortArray(submissionList, getComparator(order, orderBy)).slice(
             page * rowsPerPage,
             page * rowsPerPage + rowsPerPage,
         ),
-        [order, orderBy, page, rowsPerPage, dummyTableRows],
+        [order, orderBy, page, rowsPerPage, submissionList],
     );
 
     return (
@@ -148,7 +116,7 @@ export default function SubmissionListTable() {
             </TableContainer>
             <TablePagination
                 component='div'
-                count={dummyTableRows.length}
+                count={submissionList.length}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={[]}
                 page={page}

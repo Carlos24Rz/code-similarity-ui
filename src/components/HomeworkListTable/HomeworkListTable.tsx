@@ -14,53 +14,26 @@ import { SortOrder, getComparator, sortArray } from '@/utils/sort';
 import SortingTableHead from '../SortingTableHead/SortingTableHead';
 import TableToolbar from '../TableToolbar/TableToolbar';
 import CreateHomeworkDialog from '../CreateHomeworkDialog/CreateHomeworkDialog';
+import { Homework } from '@/lib/definitions';
+import { useRouter } from 'next/navigation';
+import { reloadHomeworkList } from '@/app/actions';
+
+// TODO: Update With more columns
+const dummyTableCols: { id: keyof Homework, label: string }[] = [{ id: 'name', label: 'Título' }];
 
 
-// TODO: Implementar Tabla con Backend
-
-interface Homework {
-    id: number,
-    title: string,
-    submissions: number,
-    similarityStatus: 0 | 1 | 2 | 3
+interface Props {
+    homeworkList: Homework[];
 }
 
+export default function HomeworkListTable(props: Props) {
+    const { homeworkList } = props;
+    const router = useRouter();
 
-function createDummyRows(numRows: number) {
-    const rows: Homework[] = []
-
-    for (let i = 0; i < numRows; i++) {
-        const homeworkTitle = `Tarea ${i + 1}`;
-        const homeworkSubmissions = Math.floor(Math.random() * 30);
-        let homeworkSimilarityStatus = 0 as 0 | 1 | 2 | 3;
-
-        if (homeworkSubmissions !== 0) {
-            homeworkSimilarityStatus = Math.floor(Math.random() * 3) + 1 as 0 | 1 | 2 | 3;
-        }
-
-        rows.push({
-            id: i,
-            title: homeworkTitle,
-            submissions: homeworkSubmissions,
-            similarityStatus: homeworkSimilarityStatus
-        });
-    }
-
-    return rows;
-}
-
-const dummyTableCols: { id: keyof Homework, label: string }[] = [{ id: 'title', label: 'Título' }, { id: 'submissions', label: 'Entregas' }, { id: 'similarityStatus', label: 'Similitud entre entregas' }];
-
-export default function HomeworkListTable() {
     const [order, setOrder] = React.useState<SortOrder>('desc');
-    const [orderBy, setOrderBy] = React.useState<keyof Homework>('similarityStatus');
+    const [orderBy, setOrderBy] = React.useState<keyof Homework>('name');
     const [page, setPage] = React.useState(0);
-    const [dummyTableRows, setDummyTableRows] = React.useState<Homework[]>([]);
     const rowsPerPage = 10;
-
-    React.useEffect(() => {
-        setDummyTableRows(createDummyRows(30));
-    }, [])
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -76,21 +49,23 @@ export default function HomeworkListTable() {
     };
 
     const handleOpenHomework = (
-        homeworkId: number
+        homeworkId: string
     ) => {
         // TODO: Open Homework
+        router.push(`/homework/${homeworkId}`);
     }
 
-    const reloadHomeworkList = () => {
+    const handleOnHomeworkSubmit = () => {
         // TODO: Reload Homework List
+        reloadHomeworkList();
     }
 
     const visibleRows = React.useMemo(
-        () => sortArray(dummyTableRows, getComparator(order, orderBy)).slice(
+        () => sortArray(homeworkList, getComparator(order, orderBy)).slice(
             page * rowsPerPage,
             page * rowsPerPage + rowsPerPage,
         ),
-        [order, orderBy, page, rowsPerPage, dummyTableRows],
+        [order, orderBy, page, rowsPerPage, homeworkList],
     );
 
     return (
@@ -103,7 +78,7 @@ export default function HomeworkListTable() {
         >
             <TableToolbar
                 tableTitle='Tareas'
-                addElement={<CreateHomeworkDialog onSubmit={reloadHomeworkList}/>}
+                addElement={<CreateHomeworkDialog onSubmit={handleOnHomeworkSubmit}/>}
             />
             <TableContainer>
                 <Table>
@@ -119,11 +94,12 @@ export default function HomeworkListTable() {
                               sx={{
                                 cursor: 'pointer'
                               }}
-                              key={row.id}
+                              key={row.homework_id}
                               hover
-                              onClick={() => handleOpenHomework(row.id)}
+                              onClick={() => handleOpenHomework(row.homework_id)}
                             >
-                                <TableCell>{row.title}</TableCell>
+                                <TableCell>{row.name}</TableCell>
+                                {/*
                                 <TableCell align='right'>{row.submissions}</TableCell>
                                 <TableCell align='right'>
                                     {row.similarityStatus === 3 ? (
@@ -141,6 +117,7 @@ export default function HomeworkListTable() {
                                         />
                                     )}
                                 </TableCell>
+                                */}
                             </TableRow>
                         ))}
                     </TableBody>
@@ -148,7 +125,7 @@ export default function HomeworkListTable() {
             </TableContainer>
             <TablePagination
                 component='div'
-                count={dummyTableRows.length}
+                count={homeworkList.length}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={[]}
                 page={page}

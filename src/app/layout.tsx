@@ -2,7 +2,8 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppHeader from "../components/AppHeader/AppHeader";
-import theme from '../theme'
+import theme from '../theme';
+import "../utils/firebase";
 
 export default function RootLayout({
   children,
@@ -11,7 +12,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body id='root'>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />

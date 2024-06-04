@@ -8,9 +8,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Box
+  Box,
+  CircularProgress,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import Alert from '../Alert/Alert';
 
 interface Props {
   onSubmit: () => void;
@@ -20,6 +22,10 @@ export default function CreateHomeworkDialog(props: Props) {
   const { onSubmit } = props;
 
   const [open, setOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  
+  const [submit, setSubmit] = React.useState(false);
+  const [submitSuccess, setSubmitSuccees] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -29,13 +35,45 @@ export default function CreateHomeworkDialog(props: Props) {
     setOpen(false);
   };
 
-  const handleSubmit = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    // TODO: Crear tarea en API
-    
+    if (isLoading) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    const formData = new FormData(event.currentTarget);
+
+    const newHomework = {
+      "name": formData.get('title')
+    };
+
+    const request = await fetch("http://localhost:5000/api/homework", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newHomework)
+    });
+
+    setIsLoading(false);
+    setSubmit(true);
+
+    if(!request.ok) {
+      // Show Message error
+      setSubmitSuccees(false);
+      return;
+    }
+
+    setSubmitSuccees(true);
+
+    // Show Success Message
+
     handleClose();
     onSubmit();
+    
   };
 
   return (
@@ -45,7 +83,7 @@ export default function CreateHomeworkDialog(props: Props) {
         startIcon={<Add />}
         onClick={handleClickOpen}
       >
-        Subir archivo
+        Crear Tarea
       </Button>
       <Dialog
         open={open}
@@ -66,6 +104,7 @@ export default function CreateHomeworkDialog(props: Props) {
             autoFocus
             required
             margin="dense"
+            name='title'
             label="Título"
             type="text"
             fullWidth
@@ -74,9 +113,37 @@ export default function CreateHomeworkDialog(props: Props) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button variant="contained" type="submit">Crear Tarea</Button>
+          <Button variant="contained" type="submit" disabled={isLoading}>
+            Crear Tarea
+            {
+              isLoading && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    marginTop: '-12px',
+                    marginLeft: '-12px',
+                  }}
+          />
+              )
+            }
+          </Button>
         </DialogActions>
       </Dialog>
+      {
+        submit && (
+          <Alert
+            severity={
+              submitSuccess ? "success" : "error"
+            }
+            message={
+              submitSuccess ? "Se ha creado la tarea" : "Error creando la tarea"
+            }
+          />
+        )
+      }
     </React.Fragment>
   );
 }
