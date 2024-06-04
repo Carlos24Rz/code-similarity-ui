@@ -1,5 +1,4 @@
 import { AppBar, Link, Toolbar } from '@mui/material';
-import AuthMenu from '../AuthMenu/AuthMenu';
 
 export default function AppHeader() {
     return (
@@ -16,7 +15,6 @@ export default function AppHeader() {
                 }}
             >
                 <Link color='primary.contrastText' variant='h5' href='#' underline='none'>Pylens</Link>
-                <AuthMenu />
             </Toolbar>
         </AppBar>
         <Toolbar />

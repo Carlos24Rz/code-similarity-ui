@@ -51,12 +51,10 @@ export default function HomeworkListTable(props: Props) {
     const handleOpenHomework = (
         homeworkId: string
     ) => {
-        // TODO: Open Homework
         router.push(`/homework/${homeworkId}`);
     }
 
     const handleOnHomeworkSubmit = () => {
-        // TODO: Reload Homework List
         reloadHomeworkList();
     }
 

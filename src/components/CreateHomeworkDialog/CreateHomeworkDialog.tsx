@@ -135,6 +135,7 @@ export default function CreateHomeworkDialog(props: Props) {
       {
         submit && (
           <Alert
+            onTimeout={() => setSubmit(false)}
             severity={
               submitSuccess ? "success" : "error"
             }

@@ -16,6 +16,7 @@ import TableToolbar from '../TableToolbar/TableToolbar';
 import CreateSubmissionDialog from '../CreateSubmissionDialog/CreateSubmissionDialog';
 import { HomeworkSubmission } from '@/lib/definitions';
 import { usePathname, useRouter } from 'next/navigation';
+import { reloadSubmissionList } from '@/app/actions';
 
 const dummyTableCols: { id: keyof HomeworkSubmission, label: string }[] = [{ id: 'filename', label: 'Archivo' }, { id: 'author', label: 'Autor' }, { id: 'similarityStatus', label: 'Índice de similitud' }];
 
@@ -49,12 +50,11 @@ export default function SubmissionListTable(props: Props) {
     const handleOpenSubmission = (
         submissionId: number
     ) => {
-        // TODO: Open Submission
         router.push(`${pathname}/submission/${submissionId}`);
     }
 
-    const reloadSubmissionList = () => {
-        // TODO: Reload submissionList
+    const reloadSubmissionListHandle = () => {
+      reloadSubmissionList(pathname);
     }
 
     const visibleRows = React.useMemo(
@@ -75,7 +75,7 @@ export default function SubmissionListTable(props: Props) {
         >
             <TableToolbar
                 tableTitle='Entregas'
-                addElement={<CreateSubmissionDialog onSubmit={reloadSubmissionList} />}
+                addElement={<CreateSubmissionDialog onSubmit={reloadSubmissionListHandle} />}
             />
             <TableContainer>
                 <Table>

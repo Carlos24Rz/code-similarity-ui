@@ -2,7 +2,7 @@ import { Paper, Container, Box, Typography } from "@mui/material"
 import DiffViewer from "@/components/DiffViewer/DiffViewer"
 import { SubmissionSimilarityRequest } from "@/lib/definitions"
 
-// TODO: Move to utils
+
 async function getSubmission(homeworkID: string, submissionID: string) {
   const request = await fetch(`http://localhost:5000/api/submission/${submissionID}/${homeworkID}`);
  

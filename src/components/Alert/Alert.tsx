@@ -4,16 +4,18 @@ import { Alert as MUIAlert, Portal, Slide, AlertColor } from '@mui/material';
 
 interface Props {
   message: string,
-  severity: AlertColor
+  severity: AlertColor,
+  onTimeout: () => void,
 }
 
 export default function Alert(props: Props) {
-  const {severity, message} = props;
+  const {severity, message, onTimeout} = props;
   const [open, setOpen] = React.useState(true);
 
   React.useEffect(() => {
     setTimeout(() => {
       setOpen(false);
+      onTimeout();
     }, 2000)
   }, [])
 

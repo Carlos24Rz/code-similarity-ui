@@ -1,5 +1,7 @@
+import * as D3 from 'd3';
+
 export interface Submission {
-    id: number;
+    id: string;
     filename: string;
     content: string;
     author: string;
@@ -51,4 +53,26 @@ export interface HomeworkSubmission {
 export interface HomeworkSubmissionRequest {
     submissions: HomeworkSubmission[];
     message: string;
+}
+
+export interface DistanceMatrix {
+  axis: Omit<Submission, "content">[];
+  distance_matrix: number[][];
+}
+
+export interface DistanceMatrixRequest {
+  message: string;
+  matrix: DistanceMatrix;
+}
+
+export interface DistanceMatrixNode extends D3.SimulationNodeDatum {
+    id: string;
+    author: string;
+    filename: string;
+}
+
+export interface DistanceMatrixLink extends D3.SimulationLinkDatum<DistanceMatrixNode>{
+    source: string;
+    target: string;
+    distance: number;
 }

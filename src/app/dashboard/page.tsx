@@ -11,7 +11,9 @@ async function getHomeworkList() {
 export default async function Dashboard() {
     const homeworkRequest = await getHomeworkList()
     return (
-        <Container component='main'>
+        <Container component='main' sx={{
+            mt: 4
+        }}>
             <HomeworkListTable homeworkList={homeworkRequest.homeworks}/>
         </Container>
     )

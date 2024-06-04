@@ -26,9 +26,7 @@ export default function DiffViewer(props: Props) {
 
       setSelectedHashes(newHashes);
 
-    }, [])
-
-    console.log(selectedHashes);
+    }, []);
 
     const handleHashToggle = (hash: string) => {
       const newHashes = new Set(selectedHashes);

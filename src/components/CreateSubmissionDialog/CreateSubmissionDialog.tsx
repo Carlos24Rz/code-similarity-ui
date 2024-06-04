@@ -10,9 +10,11 @@ import {
   DialogContentText,
   Typography,
   Box,
-  InputBase
+  InputBase,
+  CircularProgress
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import Alert from '../Alert/Alert'
 import { getStorage, uploadBytes, ref, getDownloadURL } from 'firebase/storage';
 import { useParams } from 'next/navigation';
 
@@ -25,6 +27,9 @@ export default function CreateSubmissionDialog(props: Props) {
   const params = useParams<{ homeworkID: string; }>()
 
   const [open, setOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [submit, setSubmit] = React.useState(false);
+  const [submitSuccess, setSubmitSuccees] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -37,7 +42,12 @@ export default function CreateSubmissionDialog(props: Props) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // TODO: Crear entrega en API
+    if (isLoading) {
+      return;
+    }
+
+    setIsLoading(true);
+
     const formData = new FormData(event.currentTarget)
     
     const pythonFile = formData.get('file') as File;
@@ -65,7 +75,16 @@ export default function CreateSubmissionDialog(props: Props) {
       body: JSON.stringify(newSubmission)
     });
 
-    console.log(request.ok);
+    setIsLoading(false);
+    setSubmit(true);
+
+    if(!request.ok) {
+      // Show Message error
+      setSubmitSuccees(false);
+      return;
+    }
+
+    setSubmitSuccees(true);
 
     handleClose();
     onSubmit();
@@ -110,9 +129,37 @@ export default function CreateSubmissionDialog(props: Props) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button variant="contained" type="submit">Subir Archivo</Button>
+          <Button variant="contained" type="submit" disabled={isLoading}>
+           Subir Entrega
+           {
+              isLoading && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    marginTop: '-12px',
+                    marginLeft: '-12px',
+                  }}
+                />
+            )}
+          </Button>
         </DialogActions>
       </Dialog>
+      {
+        submit && (
+          <Alert
+            onTimeout={() => setSubmit(false)}
+            severity={
+              submitSuccess ? "success" : "error"
+            }
+            message={
+              submitSuccess ? "Se ha creado la entrega" : "Error creando la entrega"
+            }
+          />
+        )
+      }
     </React.Fragment>
   );
 }
