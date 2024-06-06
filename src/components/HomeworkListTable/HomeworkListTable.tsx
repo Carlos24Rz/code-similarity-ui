@@ -18,8 +18,15 @@ import { Homework } from '@/lib/definitions';
 import { useRouter } from 'next/navigation';
 import { reloadHomeworkList } from '@/app/actions';
 
-// TODO: Update With more columns
-const dummyTableCols: { id: keyof Homework, label: string }[] = [{ id: 'name', label: 'Título' }];
+
+const dummyTableCols: { id: keyof Homework , label: string }[] = [
+    { id: 'name', label: 'Título'},
+    {id: 'submissions', label: 'Entregas'},
+    {id: 'notSimilarity' , label: 'Sin similitud'},
+    {id: 'lowSimilarity' , label: 'Similitud Baja'},
+    {id: 'mediumSimilarity' , label: 'Similitud Media'},
+    {id: 'highSimilarity' , label: 'Similitud Alta'}
+];
 
 
 interface Props {
@@ -31,7 +38,7 @@ export default function HomeworkListTable(props: Props) {
     const router = useRouter();
 
     const [order, setOrder] = React.useState<SortOrder>('desc');
-    const [orderBy, setOrderBy] = React.useState<keyof Homework>('name');
+    const [orderBy, setOrderBy] = React.useState<keyof Homework>('highSimilarity');
     const [page, setPage] = React.useState(0);
     const rowsPerPage = 10;
 
@@ -97,6 +104,11 @@ export default function HomeworkListTable(props: Props) {
                               onClick={() => handleOpenHomework(row.homework_id)}
                             >
                                 <TableCell>{row.name}</TableCell>
+                                <TableCell align='right'>{row.submissions}</TableCell>
+                                <TableCell align='right'>{row.notSimilarity}</TableCell>
+                                <TableCell align='right'>{row.lowSimilarity}</TableCell>
+                                <TableCell align='right'>{row.mediumSimilarity}</TableCell>
+                                <TableCell align='right'>{row.highSimilarity}</TableCell>
                                 {/*
                                 <TableCell align='right'>{row.submissions}</TableCell>
                                 <TableCell align='right'>

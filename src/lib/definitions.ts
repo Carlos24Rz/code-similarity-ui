@@ -36,6 +36,12 @@ export interface SubmissionSimilarityRequest {
 export interface Homework {
     homework_id: string;
     name: string;
+    submissions: number;
+    highSimilarity: number;
+    mediumSimilarity: number;
+    lowSimilarity: number;
+    notSimilarity: number;
+
 }
 
 export interface HomeworkRequest {

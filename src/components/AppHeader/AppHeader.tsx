@@ -14,7 +14,7 @@ export default function AppHeader() {
                     justifyContent: 'space-between'
                 }}
             >
-                <Link color='primary.contrastText' variant='h5' href='#' underline='none'>Pylens</Link>
+                <Link color='primary.contrastText' variant='h5' href='/' underline='none'>Pylens</Link>
             </Toolbar>
         </AppBar>
         <Toolbar />
