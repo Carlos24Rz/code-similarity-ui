@@ -41,8 +41,11 @@ export function getSimmilarityDecorations(
     const submissionA_decorationList = [];
     const submissionB_decorationList = [];
 
-    const submissionA_content = Text.of(sources.submissionA.content.split('\n'));
-    const submissionB_content = Text.of(sources.submissionB.content.split('\n'));
+    const submissionA_lines = sources.submissionA.content.split(/\r\n|\r|\n/)
+    const submissionB_lines = sources.submissionB.content.split(/\r\n|\r|\n/)
+
+    const submissionA_content = Text.of(submissionA_lines);
+    const submissionB_content = Text.of(submissionB_lines);
 
     for (let idx = 0; idx < sources.matches.length; idx++) {
         const match = sources.matches[idx];
